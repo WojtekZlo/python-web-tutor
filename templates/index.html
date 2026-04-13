@@ -4,47 +4,319 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Python Tutor - Bioinformatyka</title>
-    <!-- CodeMirror for syntax highlighting -->
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #2c3e50; color: #ecf0f1; margin: 0; display: flex; height: 100vh; }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-thumb { background: #34495e; border-radius: 4px; }
-        
-        .sidebar { width: 35%; background: #ffffff; color: #2c3e50; padding: 25px; box-shadow: 2px 0 10px rgba(0,0,0,0.5); overflow-y: auto; z-index: 10; }
-        .editor-container { width: 65%; display: flex; flex-direction: column; background: #1e1e1e;}
-        
-        .code-area { flex-grow: 1; position: relative; }
-        .CodeMirror { height: 100%; font-size: 18px; font-family: 'Consolas', 'Courier New', monospace; }
-        
-        .terminal { background: #111; color: #2ecc71; height: 35%; padding: 20px; font-family: 'Consolas', monospace; overflow-y: auto; border-top: 5px solid #2c3e50; white-space: pre-wrap; font-size: 16px;}
-        
-        h1 { color: #2c3e50; font-size: 24px; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; margin-top: 0;}
-        h2 { font-size: 20px; color: #2980b9;}
-        
-        .badge { background: #e74c3c; color: white; padding: 5px 12px; border-radius: 12px; font-size: 14px; font-weight: bold; float: right;}
-        .instruction { line-height: 1.6; color: #34495e; background: #ecf0f1; padding: 20px; border-radius: 8px; border-left: 5px solid #3498db; margin-top: 15px; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);}
-        
-        .btn { background: #27ae60; color: white; border: none; padding: 15px 24px; font-size: 18px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 25px; width: 100%; transition: background 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.1);}
-        .btn:hover { background: #2ecc71; transform: translateY(-2px);}
-        
-        .btn-reset { background: #e74c3c; margin-top: 15px; font-size: 14px; padding: 10px;}
-        .btn-reset:hover { background: #c0392b; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #2c3e50;
+            color: #ecf0f1;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+        }
 
-        .btn-test { background: #2980b9; margin-top: 15px; font-size: 14px; padding: 10px; }
-        .btn-test:hover { background: #3498db; }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
 
-        .btn-end-test { background: #8e44ad; margin-top: 15px; font-size: 14px; padding: 10px; }
-        .btn-end-test:hover { background: #9b59b6; }
+        ::-webkit-scrollbar-thumb {
+            background: #34495e;
+            border-radius: 4px;
+        }
+
+        .sidebar {
+            width: 35%;
+            background: #ffffff;
+            color: #2c3e50;
+            padding: 25px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+            z-index: 10;
+        }
+
+        .editor-container {
+            width: 65%;
+            display: flex;
+            flex-direction: column;
+            background: #1e1e1e;
+        }
+
+        .code-area {
+            flex-grow: 1;
+            position: relative;
+        }
+
+        .CodeMirror {
+            height: 100%;
+            font-size: 18px;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+
+        .terminal {
+            background: #111;
+            color: #2ecc71;
+            height: 35%;
+            padding: 20px;
+            font-family: 'Consolas', monospace;
+            overflow-y: auto;
+            border-top: 5px solid #2c3e50;
+            white-space: pre-wrap;
+            font-size: 16px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 24px;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+
+        h2 {
+            font-size: 20px;
+            color: #2980b9;
+            margin-top: 18px;
+        }
+
+        .badge {
+            background: #e74c3c;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            float: right;
+        }
+
+        .instruction {
+            line-height: 1.6;
+            color: #34495e;
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid #3498db;
+            margin-top: 15px;
+            font-size: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .instruction p {
+            margin: 0 0 10px;
+        }
+
+        .instruction p:last-child {
+            margin-bottom: 0;
+        }
+
+        .instruction code {
+            background: #dde6ed;
+            color: #1c2833;
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-size: 0.95em;
+        }
+
+        .instruction pre {
+            background: #d7e1e8;
+            color: #1c2833;
+            padding: 12px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+
+        .instruction ul,
+        .instruction ol {
+            margin: 8px 0 8px 20px;
+            padding: 0;
+        }
+
+        .user-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f3f7fa;
+            border: 1px solid #dce6ef;
+            border-radius: 8px;
+            padding: 8px 10px;
+            margin-bottom: 12px;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 15px 24px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 25px;
+            width: 100%;
+            transition: background 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            background: #2ecc71;
+            transform: translateY(-2px);
+        }
+
+        .btn-reset {
+            background: #e74c3c;
+            margin-top: 15px;
+            font-size: 14px;
+            padding: 10px;
+        }
+
+        .btn-reset:hover {
+            background: #c0392b;
+        }
+
+        .btn-test {
+            background: #2980b9;
+            margin-top: 15px;
+            font-size: 14px;
+            padding: 10px;
+        }
+
+        .btn-test:hover {
+            background: #3498db;
+        }
+
+        .btn-end-test {
+            background: #8e44ad;
+            margin-top: 15px;
+            font-size: 14px;
+            padding: 10px;
+        }
+
+        .btn-end-test:hover {
+            background: #9b59b6;
+        }
+
+        .btn-logout {
+            width: auto;
+            margin: 0;
+            padding: 6px 10px;
+            font-size: 12px;
+            background: #34495e;
+            box-shadow: none;
+        }
+
+        .btn-logout:hover {
+            background: #2c3e50;
+            transform: none;
+        }
+
+        .auth-shell {
+            margin: auto;
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: #ffffff;
+            color: #2c3e50;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .auth-card h1 {
+            margin-bottom: 14px;
+        }
+
+        .auth-card p {
+            color: #44566b;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .auth-input {
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 10px;
+            border: 1px solid #d4dde7;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 16px;
+        }
+
+        .auth-help {
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 13px;
+            color: #44566b;
+            background: #f5f8fb;
+            border: 1px solid #e2eaf2;
+            border-radius: 8px;
+        }
+
+        .auth-error {
+            margin-top: 10px;
+            color: #b00020;
+            font-size: 14px;
+            min-height: 18px;
+        }
+
+        @media (max-width: 900px) {
+            body {
+                flex-direction: column;
+                height: auto;
+                min-height: 100vh;
+            }
+
+            .sidebar,
+            .editor-container {
+                width: 100%;
+            }
+
+            .sidebar {
+                max-height: none;
+            }
+
+            .code-area {
+                min-height: 40vh;
+            }
+
+            .terminal {
+                height: 34vh;
+            }
+        }
     </style>
 </head>
 <body>
 
+{% if login_required %}
+    <div class="auth-shell">
+        <div class="auth-card">
+            <h1>🧬 Bio-Python Tutor</h1>
+            <p>Zaloguj się, żeby kontynuować kurs od miejsca, w którym skończyłeś.</p>
+            <input class="auth-input" id="username" type="text" placeholder="Login, np. user1" autocomplete="username">
+            <input class="auth-input" id="password" type="password" placeholder="Hasło" autocomplete="current-password">
+            <button class="btn" onclick="login()">Zaloguj</button>
+            <div class="auth-help">Dostępne konta: {{ demo_users|join(', ') }}<br>Hasło dla wszystkich: {{ demo_password }}</div>
+            <div class="auth-error" id="authError"></div>
+        </div>
+    </div>
+{% else %}
+
     <div class="sidebar">
         <div>
+            <div class="user-panel">
+                <span>Zalogowany użytkownik: <strong>{{ username }}</strong></span>
+                <button class="btn btn-logout" onclick="logout()">Wyloguj</button>
+            </div>
+
             <h1>
                 🧬 Bio-Python Tutor
                 <span class="badge">
@@ -56,9 +328,7 @@
                 </span>
             </h1>
             <h2>📝 {{ lesson.title }}</h2>
-            <div class="instruction">
-                {{ lesson.description }}
-            </div>
+            <div class="instruction" id="lessonDescription">{{ lesson.description }}</div>
 
             {% if not test_finished %}
             <button class="btn" onclick="runCode()">▶ URUCHOM KOD</button>
@@ -88,49 +358,115 @@
 </div>
     </div>
 
+{% endif %}
+
     <script>
-        // Inicjalizacja ładnego edytora z kolorowaniem składni Pythona
-        var editor = CodeMirror.fromTextArea(document.getElementById("myCode"), {
-            lineNumbers: true,
-            mode: "python",
-            theme: "dracula",
-            indentUnit: 4,
-            matchBrackets: true
-        });
+        function renderMarkdownDescription() {
+            const block = document.getElementById('lessonDescription');
+            if (!block || typeof marked === 'undefined') {
+                return;
+            }
+
+            marked.setOptions({
+                gfm: true,
+                breaks: true,
+                headerIds: false,
+                mangle: false,
+            });
+
+            const rawText = block.textContent || '';
+            block.innerHTML = marked.parse(rawText);
+        }
+
+        async function login() {
+            const username = (document.getElementById('username')?.value || '').trim();
+            const password = document.getElementById('password')?.value || '';
+            const errorBox = document.getElementById('authError');
+
+            if (!username || !password) {
+                if (errorBox) {
+                    errorBox.textContent = 'Podaj login i hasło.';
+                }
+                return;
+            }
+
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password }),
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                window.location.reload();
+            } else if (errorBox) {
+                errorBox.textContent = data.message || 'Błąd logowania.';
+            }
+        }
+
+        async function logout() {
+            await fetch('/logout', { method: 'POST' });
+            window.location.reload();
+        }
+
+        let editor = null;
+
+        if (document.getElementById('myCode')) {
+            editor = CodeMirror.fromTextArea(document.getElementById('myCode'), {
+                lineNumbers: true,
+                mode: 'python',
+                theme: 'dracula',
+                indentUnit: 4,
+                matchBrackets: true,
+            });
+        }
 
         async function runCode() {
+            if (!editor) {
+                return;
+            }
+
             const code = editor.getValue();
             const outputDiv = document.getElementById('output');
-            
-            outputDiv.innerHTML = "Wykonywanie skryptu na serwerze...\n";
-            outputDiv.style.color = "#aaaaaa";
+
+            outputDiv.innerHTML = 'Wykonywanie skryptu na serwerze...\n';
+            outputDiv.style.color = '#aaaaaa';
 
             const response = await fetch('/run', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ code: code })
+                body: JSON.stringify({ code: code }),
             });
 
-            const data = await response.json();
-            
-            if (data.success) {
-                outputDiv.style.color = "#2ecc71"; // Sukces - zielony
-            } else {
-                outputDiv.style.color = "#e74c3c"; // Błąd - czerwony
+            if (response.status === 401) {
+                window.location.reload();
+                return;
             }
-            
-            outputDiv.innerText = "=== WYNIK SKRYPTU ===\n\n" + data.output;
 
-            // Jeśli sukces, odśwież ekran i przejdź dalej.
+            const data = await response.json();
+
+            if (data.success) {
+                outputDiv.style.color = '#2ecc71';
+            } else {
+                outputDiv.style.color = '#e74c3c';
+            }
+
+            outputDiv.innerText = '=== WYNIK SKRYPTU ===\n\n' + data.output;
+
             if (data.reload) {
                 setTimeout(() => {
                     window.location.reload();
-                }, 2000);
+                }, 1200);
             }
         }
 
         async function startRandomTest() {
             const response = await fetch('/start_random_test', { method: 'POST' });
+            if (response.status === 401) {
+                window.location.reload();
+                return;
+            }
+
             const data = await response.json();
             if (data.success) {
                 window.location.reload();
@@ -141,13 +477,15 @@
             await fetch('/end_random_test', { method: 'POST' });
             window.location.reload();
         }
-        
+
         async function resetProgress() {
-            if(confirm("Czy na pewno chcesz zacząć kurs od samego początku? Wymaże to Twój obecny progres.")) {
+            if (confirm('Czy na pewno chcesz zacząć kurs od samego początku? Wymaże to Twój obecny progres.')) {
                 await fetch('/reset', { method: 'POST' });
                 window.location.reload();
             }
         }
+
+        renderMarkdownDescription();
     </script>
 </body>
 </html>
