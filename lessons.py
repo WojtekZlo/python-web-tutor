@@ -45,14 +45,14 @@ LESSONS = [
         "id": 7,
         "title": "Matematyka i operatory. (Liczymy zawartość GC!)",
         "description": "Zawartość par G-C (GC-content) w genomie jest użyteczną daną ewolucyjną, i termodynamiczną: wyższa zawartość G-C (od Guaniny 'G' i Cytozyny 'C') często oznacza, że helisa pęka w wyższych temperaturach.\n\nPython radzi sobie ze standardową matematyką używając takich znaków jak:\nDodawanie: `+`\nMnożenie: `*` (gwiazdka)\nDzielenie: `/` (ukośnik)\nNawiasy działają według znanej z matematyki kolejności wykonywania działań: `(a + b) / c`.\n\nWiesz już jak policzyć długość `len()` (nasza podstawa), oraz ilość poszczególnych nukleotydów `.count('G')` i `.count('C')`.\n\nTwoje zadanie:\nWydrukuj policzoną ilość `G` plus ilość `C`. Muszą znajdować się one wewnątrz print, np. `print( ilosc_G + ilosc_C )`.",
-        "expected_output": "6\n",
+        "expected_output": "10\n",
         "initial_code": "dna = 'CGCATACGATTGCCGTAC'\n\n# Krok 1: Policz w kodzie C oraz G łącząc w jedną sumę, następnie wydrukuj!\n"
     },
     {
         "id": 8,
         "title": "Podstawy Analizy GC Content",
         "description": "Kontynuujemy nasze obliczenia dla zawartości Guaniny 'G' i Cytozyny 'C'. \nAby uzyskać wartość procentową, musimy zsumować ilość 'G' i 'C', wynik dzielimy przez całkowitą długość nici ( len(...) ) a następnie całość mnożymy `* 100`.\n\nŻeby nasz program był przejrzysty (to super ważne dla bioinformatyków!), podzielmy matematykę na etapy i osobne zmienne!\n\nProsta ściąga:\n`dlugosc = len(...)`\n`sukcesy = ... countG ... + ... countC ...`\n`wynik_procent = ( ... ) * 100`\n\nTwoje zadanie:\nOblicz ile dokładnie procent całego odczytu `dna` to zawartość par G i C. Wydrukuj swój procent na samym końcu.",
-        "expected_output": "33.33333333333333\n",
+        "expected_output": "55.55555555555556\n",
         "initial_code": "dna = 'CGCATACGATTGCCGTAC'\n\n# Krok 1 - zmierz zmienne:\n\n# Krok 2 - zrób obliczenia dla (%):\n\n# Krok 3 - wydrukuj samo (%):\n"
     },
     {
