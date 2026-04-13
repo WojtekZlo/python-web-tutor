@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Tutor - Bioinformatyka</title>
+    <!-- CodeMirror for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #2c3e50; color: #ecf0f1; margin: 0; display: flex; height: 100vh; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-thumb { background: #34495e; border-radius: 4px; }
+        
+        .sidebar { width: 35%; background: #ffffff; color: #2c3e50; padding: 25px; box-shadow: 2px 0 10px rgba(0,0,0,0.5); overflow-y: auto; z-index: 10; }
+        .editor-container { width: 65%; display: flex; flex-direction: column; background: #1e1e1e;}
+        
+        .code-area { flex-grow: 1; position: relative; }
+        .CodeMirror { height: 100%; font-size: 18px; font-family: 'Consolas', 'Courier New', monospace; }
+        
+        .terminal { background: #111; color: #2ecc71; height: 35%; padding: 20px; font-family: 'Consolas', monospace; overflow-y: auto; border-top: 5px solid #2c3e50; white-space: pre-wrap; font-size: 16px;}
+        
+        h1 { color: #2c3e50; font-size: 24px; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; margin-top: 0;}
+        h2 { font-size: 20px; color: #2980b9;}
+        
+        .badge { background: #e74c3c; color: white; padding: 5px 12px; border-radius: 12px; font-size: 14px; font-weight: bold; float: right;}
+        .instruction { line-height: 1.6; color: #34495e; background: #ecf0f1; padding: 20px; border-radius: 8px; border-left: 5px solid #3498db; margin-top: 15px; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);}
+        
+        .btn { background: #27ae60; color: white; border: none; padding: 15px 24px; font-size: 18px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 25px; width: 100%; transition: background 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.1);}
+        .btn:hover { background: #2ecc71; transform: translateY(-2px);}
+        
+        .btn-reset { background: #e74c3c; margin-top: 15px; font-size: 14px; padding: 10px;}
+        .btn-reset:hover { background: #c0392b; }
+
+        .btn-test { background: #2980b9; margin-top: 15px; font-size: 14px; padding: 10px; }
+        .btn-test:hover { background: #3498db; }
+
+        .btn-end-test { background: #8e44ad; margin-top: 15px; font-size: 14px; padding: 10px; }
+        .btn-end-test:hover { background: #9b59b6; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div>
+            <h1>
+                🧬 Bio-Python Tutor
+                <span class="badge">
+                    {% if in_test_mode %}
+                    Test {{ lesson_num }} / {{ total }}
+                    {% else %}
+                    Lekcja {{ lesson_num }} / {{ total }}
+                    {% endif %}
+                </span>
+            </h1>
+            <h2>📝 {{ lesson.title }}</h2>
+            <div class="instruction">
+                {{ lesson.description }}
+            </div>
+
+            {% if not test_finished %}
+            <button class="btn" onclick="runCode()">▶ URUCHOM KOD</button>
+            {% endif %}
+
+            {% if not in_test_mode %}
+            <button class="btn btn-test" onclick="startRandomTest()">🎯 Losowy test 30 pytań</button>
+            {% endif %}
+
+            {% if in_test_mode %}
+            <button class="btn btn-end-test" onclick="endRandomTest()">⏹ Zakończ test i wróć do kursu</button>
+            {% endif %}
+
+            <button class="btn btn-reset" onclick="resetProgress()">↻ Zresetuj cały kurs do lekcji #1</button>
+        </div>
+    </div>
+
+    <div class="editor-container">
+        <div class="code-area">
+            <textarea id="myCode">{{ lesson.initial_code }}</textarea>
+        </div>
+        <div class="terminal" id="output">=== WYNIK TWOJEGO PROGRAMU POJAWI SIĘ TUTAJ ===
+
+1. Przeczytaj zadanie po lewej stronie.
+2. Napisz poprawny kod w edytorze u góry.
+3. Kliknij "URUCHOM KOD", aby oddać zadanie.
+</div>
+    </div>
+
+    <script>
+        // Inicjalizacja ładnego edytora z kolorowaniem składni Pythona
+        var editor = CodeMirror.fromTextArea(document.getElementById("myCode"), {
+            lineNumbers: true,
+            mode: "python",
+            theme: "dracula",
+            indentUnit: 4,
+            matchBrackets: true
+        });
+
+        async function runCode() {
+            const code = editor.getValue();
+            const outputDiv = document.getElementById('output');
+            
+            outputDiv.innerHTML = "Wykonywanie skryptu na serwerze...\n";
+            outputDiv.style.color = "#aaaaaa";
+
+            const response = await fetch('/run', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: code })
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                outputDiv.style.color = "#2ecc71"; // Sukces - zielony
+            } else {
+                outputDiv.style.color = "#e74c3c"; // Błąd - czerwony
+            }
+            
+            outputDiv.innerText = "=== WYNIK SKRYPTU ===\n\n" + data.output;
+
+            // Jeśli sukces, odśwież ekran i przejdź dalej.
+            if (data.reload) {
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            }
+        }
+
+        async function startRandomTest() {
+            const response = await fetch('/start_random_test', { method: 'POST' });
+            const data = await response.json();
+            if (data.success) {
+                window.location.reload();
+            }
+        }
+
+        async function endRandomTest() {
+            await fetch('/end_random_test', { method: 'POST' });
+            window.location.reload();
+        }
+        
+        async function resetProgress() {
+            if(confirm("Czy na pewno chcesz zacząć kurs od samego początku? Wymaże to Twój obecny progres.")) {
+                await fetch('/reset', { method: 'POST' });
+                window.location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
